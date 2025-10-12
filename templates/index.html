@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nick Cave Lyric Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+	<header>
+    <h1>Nick Cave Lyric Search</h1>
+		<h2><em>The Birthday Party, Nick Cave & The Bad Seeds, Grinderman, and</em> Carnage</h2>
+	</header>
+    <form id="search-form">
+        <input type="text" id="search-input" placeholder="Search for a phrase...">
+        <button type="submit">Search</button>
+    </form>
+
+
+    <div id="results">
+        <p id="message">Enter a search term to find lyrics.</p>
+    </div>
+
+		<footer>
+			<p>Last updated 2025-10-12 (React ⇒ Flask migration). First published 2024-08-26.</p>
+			<p>Lyrics compiled from Nick Cave's <a href="https://nickcave.com/lyrics">official website</a> and <em>Nick Cave: The Complete Lyrics 1978–2013</em>. View the <a href="https://github.com/sailorfe/nick-cave-lyrics/">dataset</a> with editorial notes.</p>
+		</footer>
+
+    <script>
+        document.getElementById('search-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const query = document.getElementById('search-input').value.trim();
+            const resultsContainer = document.getElementById('results');
+            // Check if the message element already exists in the DOM or create a new one
+            let messageElement = document.getElementById('message');
+            if (!messageElement) {
+                messageElement = document.createElement('p');
+                messageElement.id = 'message';
+            }
+
+            resultsContainer.innerHTML = '';
+            messageElement.textContent = 'Searching...';
+            resultsContainer.appendChild(messageElement); // Ensure message is visible
+
+            if (!query) {
+                messageElement.textContent = 'Please enter a search term.';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+                const results = await response.json();
+
+                if (results.length === 0) {
+                    messageElement.textContent = `No lyrics found for "${query}".`;
+                } else {
+                    messageElement.remove();
+
+										const totalLinesFound = results.length;
+										
+										// Use a Set to find the number of unique songs
+										const uniqueSongs = new Set();
+										results.forEach(item => {
+												// Create a unique key (Song + Album + Artist)
+												uniqueSongs.add(`${item.song}|${item.album}|${item.artist}`);
+										});
+										const totalUniqueSongs = uniqueSongs.size;
+
+										// Create and display the summary header
+										const summaryHeader = document.createElement('h3');
+										summaryHeader.className = 'search-summary';
+										summaryHeader.textContent = `Found ${totalLinesFound} uses in ${totalUniqueSongs} songs.`;
+										resultsContainer.appendChild(summaryHeader);
+
+                    results.forEach(item => {
+                        const resultDiv = document.createElement('div');
+                        resultDiv.className = 'result';
+
+                        // Display the context (previous line)
+                        if (item.prev_line) {
+                            const prevLine = document.createElement('p');
+                            prevLine.textContent = item.prev_line;
+                            prevLine.className = 'context-line';
+                            resultDiv.appendChild(prevLine);
+                        }
+
+                        // Display the matched line
+                        const matchedLine = document.createElement('p');
+                        matchedLine.textContent = `${item.matched_line}`;
+                        matchedLine.className = 'matched-line';
+                        resultDiv.appendChild(matchedLine);
+
+                        // Display the context (next line)
+                        if (item.next_line) {
+                            const nextLine = document.createElement('p');
+                            nextLine.textContent = item.next_line;
+                            nextLine.className = 'context-line';
+                            resultDiv.appendChild(nextLine);
+                        }
+
+												// Display conditional and styled metadata
+												const metadata = document.createElement('p');
+												metadata.className = 'metadata';
+
+												// Build the metadata string
+												const songTitle = `“${item.song},” `;
+
+												// Start with the basic metadata (always include song, artist, year)
+												let htmlString = `${songTitle}`;
+
+												// Check for the album value and conditionally add the album and the "by" separator
+												if (item.album && item.album !== 'N/A' && item.album.trim() !== '') {
+														htmlString += `<em>${item.album}</em> by `;
+												}
+
+												// Add the artist and year (always included)
+												htmlString += `${item.artist}, ${item.year}`;
+
+												// Use innerHTML to render the <em> tag for the italics
+												metadata.innerHTML = htmlString;
+												resultDiv.appendChild(metadata);
+
+                        resultsContainer.appendChild(resultDiv);
+                    });
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                messageElement.textContent = 'An error occurred during search.';
+                resultsContainer.appendChild(messageElement);
+            }
+        });
+
+    </script>
+</body>
+</html>

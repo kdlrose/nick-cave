@@ -1,0 +1,3 @@
+[submodule "lyrics_data"]
+	path = lyrics_data
+	url = https://github.com/sailorfe/nick-cave-lyrics

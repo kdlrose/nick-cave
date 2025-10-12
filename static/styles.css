@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap');
+
+body {
+    font-family: "EB Garamond", serif;
+		font-size: 18px;
+		color: DimGray;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1em;
+		text-align: center;
+}
+
+input[type="text"] {
+    width: 300px;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+		font-family: "Courier Prime", monospace;
+}
+
+button {
+    padding: 8px 15px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+h1, h2, a {
+	color: DarkRed;
+}
+
+h3 {
+	color: Gray;
+	font-size: 1em;
+}
+
+header, footer {
+	margin: 3em auto;
+}
+
+header {
+	font-size: 1.25em;
+}
+
+footer {
+		font-family: "Courier Prime", monospace;
+    font-size: 0.85em;
+}
+
+.result {
+    padding: 3em 0;
+    border-bottom: 1px solid DarkRed;
+		margin-bottom: 1em;
+}
+
+.matched-line {
+    font-weight: bold;
+    color: DarkRed;
+		margin: 0;
+}
+.context-line {
+    color: Gray;
+		margin: 0;
+}
+.metadata {
+    font-size: 0.85em;
+    margin-top: 2em;
+		font-family: "Courier Prime", monospace;
+}
